@@ -38,11 +38,17 @@ struct HabitListView: View {
                             HabitRowView(habit: habit) {
                                 habit.toggleToday()
                             }
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    modelContext.delete(habit)
+                                } label: {
+                                    Label("削除", systemImage: "trash")
+                                }
+                            }
                         }
-                        .onDelete(perform: deleteHabits)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
                     }
                     .listStyle(.plain)
                 }
@@ -63,11 +69,6 @@ struct HabitListView: View {
         }
     }
 
-    private func deleteHabits(at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(habits[index])
-        }
-    }
 }
 
 #Preview {
