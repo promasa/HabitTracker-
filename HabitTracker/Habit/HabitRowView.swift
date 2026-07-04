@@ -8,7 +8,6 @@ import SwiftUI
 struct HabitRowView: View {
     let habit: Habit
     var onToggle: () -> Void
-    var onEdit: () -> Void
 
     var body: some View {
         HStack(spacing: 16) {
@@ -19,7 +18,9 @@ struct HabitRowView: View {
             }
             .buttonStyle(.plain)
 
-            Button(action: onEdit) {
+            NavigationLink {
+                HabitDetailView(habit: habit)
+            } label: {
                 HStack(spacing: 8) {
                     Text(habit.name)
                         .font(.headline)
@@ -45,6 +46,10 @@ struct HabitRowView: View {
                             .fill(Color.orange.opacity(0.15))
                     )
                     .foregroundStyle(.orange)
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
             }
             .buttonStyle(.plain)
@@ -60,5 +65,7 @@ struct HabitRowView: View {
 }
 
 #Preview {
-    HabitRowView(habit: Habit(name: "読書"), onToggle: {}, onEdit: {})
+    NavigationStack {
+        HabitRowView(habit: Habit(name: "読書"), onToggle: {})
+    }
 }

@@ -64,4 +64,23 @@ extension Habit {
         }
         return streakCount
     }
+
+    var longestStreak: Int {
+        let calendar = Calendar.current
+        let sortedDays = Set(completedDates.map { calendar.startOfDay(for: $0) }).sorted()
+        guard !sortedDays.isEmpty else { return 0 }
+
+        var longest = 1
+        var current = 1
+        for index in 1..<sortedDays.count {
+            let daysBetween = calendar.dateComponents([.day], from: sortedDays[index - 1], to: sortedDays[index]).day ?? 0
+            current = daysBetween == 1 ? current + 1 : 1
+            longest = max(longest, current)
+        }
+        return longest
+    }
+
+    var totalCompletedDays: Int {
+        Set(completedDates.map { Calendar.current.startOfDay(for: $0) }).count
+    }
 }

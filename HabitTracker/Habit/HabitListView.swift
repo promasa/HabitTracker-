@@ -11,7 +11,6 @@ struct HabitListView: View {
     @Query(sort: \Habit.createdAt) private var habits: [Habit]
 
     @State private var isAddSheetPresented = false
-    @State private var habitToEdit: Habit?
 
     private var completedTodayCount: Int {
         habits.filter(\.isCompletedToday).count
@@ -38,8 +37,6 @@ struct HabitListView: View {
                         ForEach(habits) { habit in
                             HabitRowView(habit: habit) {
                                 habit.toggleToday()
-                            } onEdit: {
-                                habitToEdit = habit
                             }
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets())
@@ -69,9 +66,6 @@ struct HabitListView: View {
             }
             .sheet(isPresented: $isAddSheetPresented) {
                 HabitAddSheet()
-            }
-            .sheet(item: $habitToEdit) { habit in
-                HabitEditSheet(habit: habit)
             }
         }
     }
