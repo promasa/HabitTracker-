@@ -7,6 +7,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @Query private var habits: [Habit]
+
     var body: some View {
         TabView {
             CounterListView()
@@ -18,6 +20,9 @@ struct ContentView: View {
                 .tabItem {
                     Label("習慣", systemImage: "checklist")
                 }
+        }
+        .task {
+            NotificationManager.shared.rescheduleAll(habits: habits)
         }
     }
 }

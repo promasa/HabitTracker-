@@ -11,11 +11,21 @@ final class Habit {
     var name: String
     var createdAt: Date
     var completedDates: [Date]
+    var reminderTime: Date?
+    var notificationID: String = UUID().uuidString
 
-    init(name: String, createdAt: Date = .now, completedDates: [Date] = []) {
+    init(
+        name: String,
+        createdAt: Date = .now,
+        completedDates: [Date] = [],
+        reminderTime: Date? = nil,
+        notificationID: String = UUID().uuidString
+    ) {
         self.name = name
         self.createdAt = createdAt
         self.completedDates = completedDates
+        self.reminderTime = reminderTime
+        self.notificationID = notificationID
     }
 }
 

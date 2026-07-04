@@ -1,18 +1,26 @@
 //
-//  HabitAddSheet.swift
+//  HabitEditSheet.swift
 //  HabitTracker
 //
 
 import SwiftUI
-import SwiftData
 
-struct HabitAddSheet: View {
-    @Environment(\.modelContext) private var modelContext
+struct HabitEditSheet: View {
+    @Bindable var habit: Habit
     @Environment(\.dismiss) private var dismiss
 
-    @State private var name: String = ""
-    @State private var isReminderOn = false
-    @State private var reminderTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: .now) ?? .now
+    @State private var name: String
+    @State private var isReminderOn: Bool
+    @State private var reminderTime: Date
+
+    init(habit: Habit) {
+        self.habit = habit
+        _name = State(initialValue: habit.name)
+        _isReminderOn = State(initialValue: habit.reminderTime != nil)
+        _reminderTime = State(
+            initialValue: habit.reminderTime ?? Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: .now) ?? .now
+        )
+    }
 
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -31,15 +39,15 @@ struct HabitAddSheet: View {
                     }
                 }
             }
-            .navigationTitle("習慣を追加")
+            .navigationTitle("習慣を編集")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("キャンセル") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("追加") {
-                        Task { await addHabit() }
+                    Button("保存") {
+                        Task { await save() }
                     }
                     .disabled(!isValid)
                 }
@@ -47,10 +55,8 @@ struct HabitAddSheet: View {
         }
     }
 
-    private func addHabit() async {
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let habit = Habit(name: trimmedName)
-        modelContext.insert(habit)
+    private func save() async {
+        habit.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if isReminderOn {
             if await NotificationManager.shared.authorizationStatus() == .notDetermined {
@@ -58,6 +64,9 @@ struct HabitAddSheet: View {
             }
             habit.reminderTime = reminderTime
             NotificationManager.shared.schedule(for: habit)
+        } else {
+            habit.reminderTime = nil
+            NotificationManager.shared.cancel(for: habit)
         }
 
         dismiss()
@@ -65,6 +74,6 @@ struct HabitAddSheet: View {
 }
 
 #Preview {
-    HabitAddSheet()
+    HabitEditSheet(habit: Habit(name: "読書"))
         .modelContainer(for: Habit.self, inMemory: true)
 }

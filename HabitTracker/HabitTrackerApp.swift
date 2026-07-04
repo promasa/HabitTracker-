@@ -7,9 +7,14 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct HabitTrackerApp: App {
+    init() {
+        UNUserNotificationCenter.current().delegate = NotificationManager.shared
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Counter.self,

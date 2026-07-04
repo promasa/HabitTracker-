@@ -8,6 +8,7 @@ import SwiftUI
 struct HabitRowView: View {
     let habit: Habit
     var onToggle: () -> Void
+    var onEdit: () -> Void
 
     var body: some View {
         HStack(spacing: 16) {
@@ -18,23 +19,35 @@ struct HabitRowView: View {
             }
             .buttonStyle(.plain)
 
-            Text(habit.name)
-                .font(.headline)
+            Button(action: onEdit) {
+                HStack(spacing: 8) {
+                    Text(habit.name)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
 
-            Spacer()
+                    if habit.reminderTime != nil {
+                        Image(systemName: "bell.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
-            HStack(spacing: 4) {
-                Text("🔥")
-                Text("\(habit.streak)")
-                    .font(.subheadline.bold())
+                    Spacer()
+
+                    HStack(spacing: 4) {
+                        Text("🔥")
+                        Text("\(habit.streak)")
+                            .font(.subheadline.bold())
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(Color.orange.opacity(0.15))
+                    )
+                    .foregroundStyle(.orange)
+                }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                Capsule()
-                    .fill(Color.orange.opacity(0.15))
-            )
-            .foregroundStyle(.orange)
+            .buttonStyle(.plain)
         }
         .padding(16)
         .background(
@@ -47,5 +60,5 @@ struct HabitRowView: View {
 }
 
 #Preview {
-    HabitRowView(habit: Habit(name: "読書")) {}
+    HabitRowView(habit: Habit(name: "読書"), onToggle: {}, onEdit: {})
 }
