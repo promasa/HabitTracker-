@@ -24,22 +24,37 @@ struct CounterListView: View {
                     )
                 } else {
                     List {
-                        ForEach(counters.indices, id: \.self) { index in
-                            let counter = counters[index]
-                            if index == 0 {
-                                CounterHeroCardView(counter: counter) {
-                                    counterToReset = counter
-                                }
-                            } else {
-                                CounterRowView(counter: counter) {
-                                    counterToReset = counter
+                        if let firstCounter = counters.first {
+                            CounterHeroCardView(counter: firstCounter) {
+                                counterToReset = firstCounter
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    modelContext.delete(firstCounter)
+                                } label: {
+                                    Label("削除", systemImage: "trash")
                                 }
                             }
                         }
-                        .onDelete(perform: deleteCounters)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
+
+                        ForEach(restCounters) { counter in
+                            CounterRowView(counter: counter) {
+                                counterToReset = counter
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    modelContext.delete(counter)
+                                } label: {
+                                    Label("削除", systemImage: "trash")
+                                }
+                            }
+                        }
                     }
                     .listStyle(.plain)
                 }
@@ -80,10 +95,8 @@ struct CounterListView: View {
         }
     }
 
-    private func deleteCounters(at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(counters[index])
-        }
+    private var restCounters: [Counter] {
+        Array(counters.dropFirst())
     }
 }
 
