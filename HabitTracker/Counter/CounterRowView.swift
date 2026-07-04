@@ -17,6 +17,9 @@ struct CounterRowView: View {
                 Text("開始日: \(counter.startDate.formatted(.dateTime.year().month().day()))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                Text("最高 \(counter.displayedLongestRecord)日")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
 
             Spacer()

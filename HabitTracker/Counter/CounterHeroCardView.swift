@@ -28,6 +28,10 @@ struct CounterHeroCardView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
+            Text("最高記録 \(counter.displayedLongestRecord)日")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
             Button(role: .destructive) {
                 onReset()
             } label: {

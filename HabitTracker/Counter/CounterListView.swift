@@ -83,7 +83,10 @@ struct CounterListView: View {
                 titleVisibility: .visible
             ) {
                 Button("リセット", role: .destructive) {
-                    counterToReset?.startDate = Calendar.current.startOfDay(for: .now)
+                    if let counter = counterToReset {
+                        counter.longestRecord = max(counter.longestRecord, counter.elapsedDays)
+                        counter.startDate = Calendar.current.startOfDay(for: .now)
+                    }
                     counterToReset = nil
                 }
                 Button("キャンセル", role: .cancel) {
