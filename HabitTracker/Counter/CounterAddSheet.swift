@@ -9,6 +9,7 @@ import SwiftData
 struct CounterAddSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \Counter.sortOrder) private var counters: [Counter]
 
     @State private var name: String = ""
     @State private var startDate: Date = Calendar.current.startOfDay(for: .now)
@@ -43,7 +44,8 @@ struct CounterAddSheet: View {
 
     private func addCounter() {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let counter = Counter(name: trimmedName, startDate: startDate)
+        let nextSortOrder = (counters.map(\.sortOrder).max() ?? -1) + 1
+        let counter = Counter(name: trimmedName, startDate: startDate, sortOrder: nextSortOrder)
         modelContext.insert(counter)
         dismiss()
     }

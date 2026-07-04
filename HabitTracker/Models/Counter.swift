@@ -11,11 +11,13 @@ final class Counter {
     var name: String
     var startDate: Date
     var longestRecord: Int = 0
+    var sortOrder: Int = 0
 
-    init(name: String, startDate: Date = .now, longestRecord: Int = 0) {
+    init(name: String, startDate: Date = .now, longestRecord: Int = 0, sortOrder: Int = 0) {
         self.name = name
         self.startDate = startDate
         self.longestRecord = longestRecord
+        self.sortOrder = sortOrder
     }
 }
 

@@ -8,7 +8,7 @@ import SwiftData
 
 struct CounterListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Counter.startDate) private var counters: [Counter]
+    @Query(sort: \Counter.sortOrder) private var counters: [Counter]
 
     @State private var isAddSheetPresented = false
     @State private var counterToReset: Counter?
@@ -24,25 +24,17 @@ struct CounterListView: View {
                     )
                 } else {
                     List {
-                        if let firstCounter = counters.first {
-                            CounterHeroCardView(counter: firstCounter) {
-                                counterToReset = firstCounter
-                            }
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    modelContext.delete(firstCounter)
-                                } label: {
-                                    Label("削除", systemImage: "trash")
+                        ForEach(counters) { counter in
+                            Group {
+                                if counter === counters.first {
+                                    CounterHeroCardView(counter: counter) {
+                                        counterToReset = counter
+                                    }
+                                } else {
+                                    CounterRowView(counter: counter) {
+                                        counterToReset = counter
+                                    }
                                 }
-                            }
-                        }
-
-                        ForEach(restCounters) { counter in
-                            CounterRowView(counter: counter) {
-                                counterToReset = counter
                             }
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets())
@@ -55,12 +47,16 @@ struct CounterListView: View {
                                 }
                             }
                         }
+                        .onMove(perform: moveCounters)
                     }
                     .listStyle(.plain)
                 }
             }
             .navigationTitle("継続カウンター")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         isAddSheetPresented = true
@@ -98,8 +94,12 @@ struct CounterListView: View {
         }
     }
 
-    private var restCounters: [Counter] {
-        Array(counters.dropFirst())
+    private func moveCounters(from indices: IndexSet, to newOffset: Int) {
+        var reordered = counters
+        reordered.move(fromOffsets: indices, toOffset: newOffset)
+        for (index, counter) in reordered.enumerated() {
+            counter.sortOrder = index
+        }
     }
 }
 
